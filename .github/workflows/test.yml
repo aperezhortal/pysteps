@@ -24,19 +24,7 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version:  ${{ matrix.python-version }}
-      - name: Install gcc for MacOSX
-          if: matrix.os == 'macos-latest'
-          run: |
-            export HOMEBREW_NO_INSTALL_CLEANUP=1
-            brew update-reset
-            brew update
-            brew install gcc@9
-            which gcc-9
-            export CC=gcc-9
-            export CXX=g++-9
-            export CXX1X=g++-9
-            gcc-9 --version
+          python-version:  ${{ matrix.python-version }}      
       - name: Install dependencies
         env:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
