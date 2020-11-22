@@ -4,7 +4,7 @@ env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
   OPTIONAL_DEPENDENCIES: dask pyfftw cartopy h5py PyWavelets pygrib
   TEST_DEPENDENCIES: pytest pytest-cov codecov
-  PYSTEPS_DATA_DIR: ${GITHUB_WORKSPACE}/pysteps_data
+  PYSTEPS_DATA_DIR: ${{env.GITHUB_WORKSPACE}}/pysteps_data
 
 on: [ push ]
 
@@ -25,6 +25,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version:  ${{ matrix.python-version }}
+      - name: Install gcc for MacOSX
+          if: matrix.os == macos-latest
+          run: |
+            export HOMEBREW_NO_INSTALL_CLEANUP=1
+            brew update-reset
+            brew update
+            brew install gcc@9
+            which gcc-9
+            export CC=gcc-9
+            export CXX=g++-9
+            export CXX1X=g++-9
+            gcc-9 --version
       - name: Install dependencies
         env:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
@@ -38,8 +50,9 @@ jobs:
       - name: Download pysteps data
         run: |
           $CONDA/bin/python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
-          cp ${{env.PYSTEPS_DATA_DIR}}/pystepsrc ~/pystepsrc
       - name: Run tests
+        env:
+          PYSTEPSRC: ${{env.PYSTEPS_DATA_DIR}}/pystepsrc
         run: $CONDA/bin/pytest --pyargs pysteps --cov=pysteps -ra;
         working-directory: ${{env.HOME}}
 
