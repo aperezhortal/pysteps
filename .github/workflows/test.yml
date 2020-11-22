@@ -42,19 +42,19 @@ jobs:
           mamba install --quiet ${{env.PACKAGES}} --name base
 
       - name: Install pysteps for MacOS
-          if: matrix.os == 'macos-latest'
-          working-directory: ${{github.workspace}}
-          env:
-            CC: gcc-9
-            CXX: g++-9
-            CXX1X: g++-9
-            HOMEBREW_NO_INSTALL_CLEANUP: 1
-          run: |
-            brew update-reset
-            brew update
-            brew install gcc@9
-            gcc-9 --version
-            pip install .
+        if: matrix.os == 'macos-latest'
+        working-directory: ${{github.workspace}}
+        env:
+          CC: gcc-9
+          CXX: g++-9
+          CXX1X: g++-9
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+        run: |
+          brew update-reset
+          brew update
+          brew install gcc@9
+          gcc-9 --version
+          pip install .
 
       - name: Install pysteps
         if: matrix.os != 'macos-latest'
