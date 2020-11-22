@@ -33,7 +33,6 @@ jobs:
           $CONDA/bin/conda config --add channels conda-forge
           $CONDA/bin/conda install mamba
           $CONDA/bin/mamba install ${{env.PACKAGES}} --name base
-          $CONDA/bin/conda activate base
       - name: Install pysteps
         run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}
       - name: Download pysteps data
