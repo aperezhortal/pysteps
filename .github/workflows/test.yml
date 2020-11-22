@@ -2,7 +2,7 @@ name: Test Pysteps installation
 
 env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy
-  OPTIONAL_DEPENDENCIES: pyfftw cartopy h5py PyWavelets pygrib dask
+  OPTIONAL_DEPENDENCIES: pyfftw cartopy h5py PyWavelets dask
   TEST_DEPENDENCIES: pytest pytest-cov codecov
 
 on: [ push ]
@@ -42,7 +42,6 @@ jobs:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
-          conda install --quiet mamba
           conda install --quiet ${{env.PACKAGES}}
 
       - name: Install pysteps for MacOS
@@ -62,8 +61,11 @@ jobs:
           which python
           pip install .
 
-      - name: Install pysteps
+      - name: Install pygrib
+        if: matrix.os != 'windows-latest'
+        run: conda install --quiet pygrib
 
+      - name: Install pysteps
         if: matrix.os != 'macos-latest'
         working-directory: ${{github.workspace}}
         run: |
