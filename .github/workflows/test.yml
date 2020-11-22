@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         env:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
-          PYSTEPS_DATA_DIR: ${{github.workspace}}/pysteps_data
+          PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
           $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
           $CONDA/bin/conda config --add channels conda-forge
@@ -37,12 +37,12 @@ jobs:
         run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}
       - name: Download pysteps data
         env:
-          PYSTEPS_DATA_DIR: ${{github.workspace}}/pysteps_data
+          PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
           $CONDA/bin/python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
       - name: Run tests
         env:
-          PYSTEPSRC: ${{env.PYSTEPS_DATA_DIR}}/pystepsrc
+          PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
         run: $CONDA/bin/pytest --pyargs pysteps --cov=pysteps -ra;
         working-directory: ${{env.HOME}}
 
