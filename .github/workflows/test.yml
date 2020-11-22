@@ -1,7 +1,7 @@
 name: Test Pysteps installation
 
 env:
-  MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
+  MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy
   OPTIONAL_DEPENDENCIES: pyfftw cartopy h5py PyWavelets pygrib
   TEST_DEPENDENCIES: pytest pytest-cov codecov
 
