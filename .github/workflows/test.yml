@@ -39,58 +39,55 @@ jobs:
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
           conda install --quiet mamba
-#          mamba install --quiet ${{env.PACKAGES}}
+          mamba install --quiet ${{env.PACKAGES}}
 
-      - name: debug
+      - name: Install pysteps for MacOS
+        if: matrix.os == 'macos-latest'
         shell: bash -l {0}
+        working-directory: ${{github.workspace}}
+        env:
+          CC: gcc-9
+          CXX: g++-9
+          CXX1X: g++-9
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
         run: |
-          conda info
-          which conda
-          which python
-          which pytest
+          brew update-reset
+          brew update
+          brew install gcc@9
+          gcc-9 --version
+          pip install .
 
-#      - name: Install pysteps for MacOS
-#        if: matrix.os == 'macos-latest'
-#        working-directory: ${{github.workspace}}
-#        env:
-#          CC: gcc-9
-#          CXX: g++-9
-#          CXX1X: g++-9
-#          HOMEBREW_NO_INSTALL_CLEANUP: 1
-#        run: |
-#          brew update-reset
-#          brew update
-#          brew install gcc@9
-#          gcc-9 --version
-#          pip install .
-#
-#      - name: Install pysteps
-#        if: matrix.os != 'macos-latest'
-#        working-directory: ${{github.workspace}}
-#        run: pip install .
-#
-#      - name: Download pysteps data
-#        env:
-#          PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
-#        working-directory: ${{github.workspace}}/ci
-#        run: python fetch_pysteps_data.py
-#
-#      - name: Check imports
-#        working-directory: ${{github.workspace}}/pysteps_data
-#        run: |
-#          python -c "import pysteps; print(pysteps.__file__)"
-#          python -c "from pysteps import motion"
-#          python -c "from pysteps.motion import vet"
-#          python -c "from pysteps.motion import proesmans"
-#
-#      - name: Run tests
-#        env:
-#          PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
-#        run: |
-#          python -c "import pysteps; print(pysteps.__file__)"
-#          python -c "from pysteps import motion"
-#          python -c "from pysteps.motion import vet"
-#          python -c "from pysteps.motion import proesmans"
-#          pytest --pyargs pysteps --cov=pysteps -ra;
-#        working-directory: ${{github.workspace}}/pysteps_data
+      - name: Install pysteps
+        if: matrix.os != 'macos-latest'
+        shell: bash -l {0}
+        working-directory: ${{github.workspace}}
+        run: pip install .
+
+      - name: Download pysteps data
+        shell: bash -l {0}
+        env:
+          PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
+        working-directory: ${{github.workspace}}/ci
+        run: python fetch_pysteps_data.py
+
+      - name: Check imports
+        shell: bash -l {0}
+        working-directory: ${{github.workspace}}/pysteps_data
+        run: |
+          python -c "import pysteps; print(pysteps.__file__)"
+          python -c "from pysteps import motion"
+          python -c "from pysteps.motion import vet"
+          python -c "from pysteps.motion import proesmans"
+
+      - name: Run tests
+        shell: bash -l {0}
+        env:
+          PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
+        run: |
+          python -c "import pysteps; print(pysteps.__file__)"
+          python -c "from pysteps import motion"
+          python -c "from pysteps.motion import vet"
+          python -c "from pysteps.motion import proesmans"
+          pytest --pyargs pysteps --cov=pysteps -ra;
+        working-directory: ${{github.workspace}}/pysteps_data
 
