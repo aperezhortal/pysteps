@@ -15,6 +15,7 @@ from pysteps.datasets import create_default_pystepsrc, download_pysteps_data
 
 tox_test_data_dir = os.environ["PYSTEPS_DATA_DIR"]
 
+print("Downloading data to:", tox_test_data_dir)
 download_pysteps_data(tox_test_data_dir, force=True)
 
 create_default_pystepsrc(
