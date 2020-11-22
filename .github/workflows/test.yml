@@ -1,5 +1,10 @@
 name: Test Pysteps installation
 
+env:
+  MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
+  OPTIONAL_DEPENDENCIES: dask pyfftw cartopy h5py PyWavelets pygrib
+  TEST_DEPENDENCIES: pytest pytest-cov codecov
+
 on: [ push ]
 
 jobs:
@@ -15,12 +20,14 @@ jobs:
         with:
           python-version: 3.8
       - name: Install dependencies
-        run: $CONDA/bin/conda env update --file environment_dev.yml --name base
+        run: |
+          $CONDA/bin/conda env update ${MINIMAL_DEPENDENCIES} ${OPTIONAL_DEPENDENCIES} ${TEST_DEPENDENCIES} --name base
       - name: Install pysteps
         run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}        
       - name: Download pysteps data
+        env:
+          PYSTEPS_DATA_DIR=${GITHUB_WORKSPACE}/pysteps_data
         run: |
-          export PYSTEPS_DATA_DIR=${GITHUB_WORKSPACE}/pysteps_data
           $CONDA/bin/python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
 
 
