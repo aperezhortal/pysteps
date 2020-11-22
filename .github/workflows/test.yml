@@ -21,6 +21,8 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
+          $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
+          $CONDA/bin/conda config --add channels conda-forge
           $CONDA/bin/conda install ${MINIMAL_DEPENDENCIES} ${OPTIONAL_DEPENDENCIES} ${TEST_DEPENDENCIES} --name base
       - name: Install pysteps
         run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}        
