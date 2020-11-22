@@ -4,7 +4,6 @@ env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
   OPTIONAL_DEPENDENCIES: dask pyfftw cartopy h5py PyWavelets pygrib
   TEST_DEPENDENCIES: pytest pytest-cov codecov
-  PYSTEPS_DATA_DIR: ${{GITHUB_WORKSPACE}}/pysteps_data
 
 on: [ push ]
 
@@ -28,6 +27,7 @@ jobs:
       - name: Install dependencies
         env:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
+          PYSTEPS_DATA_DIR: ${{env.GITHUB_WORKSPACE}}/pysteps_data
         run: |
           echo $PYSTEPS_DATA_DIR
 #          $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
