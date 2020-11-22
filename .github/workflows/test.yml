@@ -39,12 +39,12 @@ jobs:
           gcc-9 --version
 
       - name: Setup Miniconda
-          uses: conda-incubator/setup-miniconda@v2.0.0
-          with:
-            auto-update-conda: true
-            python-version: ${{ matrix.python-version }}
-            channels: conda-forge
-            activate-environment: test-environment
+        uses: conda-incubator/setup-miniconda@v2.0.0
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+          activate-environment: test-environment
 
       - name: Install dependencies
         env:
