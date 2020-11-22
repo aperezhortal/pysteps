@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install dependencies
-        run: $CONDA/bin/conda env update --file environment_dev.yml --name base
+          run: $CONDA/bin/conda env update --file environment_dev.yml --name base
       - name: Install pysteps
           run: pip install ${GITHUB_WORKSPACE}
       - name: Download pysteps data
