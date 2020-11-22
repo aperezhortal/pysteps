@@ -4,7 +4,7 @@ env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
   OPTIONAL_DEPENDENCIES: dask pyfftw cartopy h5py PyWavelets pygrib
   TEST_DEPENDENCIES: pytest pytest-cov codecov
-  PYSTEPS_DATA_DIR: $GITHUB_WORKSPACE/pysteps_data
+  PYSTEPS_DATA_DIR: ${{env.GITHUB_WORKSPACE}}/pysteps_data
 
 on: [ push ]
 
@@ -30,18 +30,18 @@ jobs:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
         run: |
           echo $PYSTEPS_DATA_DIR
-          $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
-          $CONDA/bin/conda config --add channels conda-forge
-          $CONDA/bin/conda install mamba
-          $CONDA/bin/mamba install ${{env.PACKAGES}} --name base
-      - name: Install pysteps
-        run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}
-      - name: Download pysteps data
-        run: |
-          $CONDA/bin/python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
-      - name: Run tests
-        env:
-          PYSTEPSRC: ${{env.PYSTEPS_DATA_DIR}}/pystepsrc
-        run: $CONDA/bin/pytest --pyargs pysteps --cov=pysteps -ra;
-        working-directory: ${{env.HOME}}
+#          $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
+#          $CONDA/bin/conda config --add channels conda-forge
+#          $CONDA/bin/conda install mamba
+#          $CONDA/bin/mamba install ${{env.PACKAGES}} --name base
+#      - name: Install pysteps
+#        run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}
+#      - name: Download pysteps data
+#        run: |
+#          $CONDA/bin/python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
+#      - name: Run tests
+#        env:
+#          PYSTEPSRC: ${{env.PYSTEPS_DATA_DIR}}/pystepsrc
+#        run: $CONDA/bin/pytest --pyargs pysteps --cov=pysteps -ra;
+#        working-directory: ${{env.HOME}}
 
