@@ -25,15 +25,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install gcc for MacOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          export HOMEBREW_NO_INSTALL_CLEANUP=1
-          brew update-reset
-          brew update
-          brew install gcc@9
-          gcc-9 --version
-
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.0.0
         with:
@@ -50,13 +41,24 @@ jobs:
           conda install --quiet mamba
           mamba install --quiet ${{env.PACKAGES}} --name base
 
-      - name: Install pysteps
-        working-directory: ${{github.workspace}}
-        env:
-          CC: gcc-9
-          CXX: g++-9
-          CXX1X: g++-9
+      - name: Install pysteps for MacOS
+          if: matrix.os == 'macos-latest'
+          working-directory: ${{github.workspace}}
+          env:
+            CC: gcc-9
+            CXX: g++-9
+            CXX1X: g++-9
+            HOMEBREW_NO_INSTALL_CLEANUP: 1
+          run: |
+            brew update-reset
+            brew update
+            brew install gcc@9
+            gcc-9 --version
+            pip install .
 
+      - name: Install pysteps
+        if: matrix.os != 'macos-latest'
+        working-directory: ${{github.workspace}}
         run: pip install .
 
       - name: Download pysteps data
@@ -66,6 +68,7 @@ jobs:
           python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
 
       - name: Check imports
+        working-directory: ${{github.workspace}}/pysteps_data
         run: |
           python -c "import pysteps; print(pysteps.__file__)"
           python -c "from pysteps import motion"
@@ -77,6 +80,9 @@ jobs:
           PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
         run: |
           python -c "import pysteps; print(pysteps.__file__)"
+          python -c "from pysteps import motion"
+          python -c "from pysteps.motion import vet"
+          python -c "from pysteps.motion import proesmans"
           pytest --pyargs pysteps --cov=pysteps -ra;
         working-directory: ${{github.workspace}}/pysteps_data
 
