@@ -20,4 +20,4 @@ jobs:
     - name: Download pysteps data
       run: |
         export PYSTEPS_DATA_DIR=$PWD/pysteps_data
-        $CONDA/bin/python fetch_pysteps_data.py
+        $CONDA/bin/python pysteps/ci/fetch_pysteps_data.py
