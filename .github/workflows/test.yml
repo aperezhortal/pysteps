@@ -1,6 +1,6 @@
 name: Test Pysteps installation
 
-on: [push]
+on: [ push ]
 
 jobs:
   build-linux:
@@ -9,15 +9,17 @@ jobs:
       max-parallel: 5
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: |
-        $CONDA/bin/conda env update --file environment_dev.yml --name base
-    - name: Download pysteps data
-      run: |
-        export PYSTEPS_DATA_DIR=$PWD/pysteps_data
-        $CONDA/bin/python pysteps/ci/fetch_pysteps_data.py
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: $CONDA/bin/conda env update --file environment_dev.yml --name base
+      - name: Download pysteps data
+        run: |
+          export PYSTEPS_DATA_DIR=${GITHUB_WORKSPACE}/pysteps_data
+          $CONDA/bin/python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
+      - name: Install pysteps
+        run: pip install ${GITHUB_WORKSPACE}
+
