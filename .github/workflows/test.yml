@@ -28,7 +28,7 @@ jobs:
         env:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
           PYSTEPS_DATA_DIR: ${{github.workspace}}/pysteps_data
-        run:
+        run: |
           $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
           $CONDA/bin/conda config --add channels conda-forge
           $CONDA/bin/conda install mamba
@@ -38,7 +38,7 @@ jobs:
       - name: Download pysteps data
         env:
           PYSTEPS_DATA_DIR: ${{github.workspace}}/pysteps_data
-        run:
+        run: |
           $CONDA/bin/python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
       - name: Run tests
         env:
