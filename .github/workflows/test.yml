@@ -8,7 +8,7 @@ env:
 on: [ push ]
 
 jobs:
-  build-linux:
+  unit_tests:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -32,10 +32,6 @@ jobs:
           brew update-reset
           brew update
           brew install gcc@9
-          which gcc-9
-          export CC=gcc-9
-          export CXX=g++-9
-          export CXX1X=g++-9
           gcc-9 --version
 
       - name: Setup Miniconda
@@ -51,15 +47,31 @@ jobs:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
-          conda install mamba
-          mamba install ${{env.PACKAGES}} --name base
+          conda install --quiet mamba
+          mamba install --quiet ${{env.PACKAGES}} --name base
+
       - name: Install pysteps
-        run: pip install ${GITHUB_WORKSPACE}
+        working-directory: ${{github.workspace}}
+        env:
+          CC: gcc-9
+          CXX: g++-9
+          CXX1X: g++-9
+
+        run: pip install .
+
       - name: Download pysteps data
         env:
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
           python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
+
+      - name: Check imports
+        run: |
+          python -c "import pysteps; print(pysteps.__file__)"
+          python -c "from pysteps import motion"
+          python -c "from pysteps.motion import vet"
+          python -c "from pysteps.motion import proesmans"
+
       - name: Run tests
         env:
           PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
