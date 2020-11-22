@@ -4,6 +4,7 @@ env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
   OPTIONAL_DEPENDENCIES: dask pyfftw cartopy h5py PyWavelets pygrib
   TEST_DEPENDENCIES: pytest pytest-cov codecov
+  PYSTEPS_DATA_DIR: ${GITHUB_WORKSPACE}/pysteps_data
 
 on: [ push ]
 
@@ -31,12 +32,14 @@ jobs:
           $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
           $CONDA/bin/conda config --add channels conda-forge
           $CONDA/bin/conda install  ${{env.PACKAGES}} --name base
+          $CONDA/bin/conda activate base
       - name: Install pysteps
-        run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}        
+        run: pip install ${GITHUB_WORKSPACE}
       - name: Download pysteps data
-        env:
-          PYSTEPS_DATA_DIR: ${GITHUB_WORKSPACE}/pysteps_data
         run: |
-          $CONDA/bin/python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
-
+          python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
+          cp ${{env.PYSTEPS_DATA_DIR}}/pystepsrc ~/pystepsrc
+      - name: Run tests
+        run: pytest --pyargs pysteps --cov=pysteps -ra;
+        working-directory: ${{env.HOME}}
 
