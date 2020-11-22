@@ -21,7 +21,7 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
-          $CONDA/bin/conda update ${MINIMAL_DEPENDENCIES} ${OPTIONAL_DEPENDENCIES} ${TEST_DEPENDENCIES} --name base
+          $CONDA/bin/conda install ${MINIMAL_DEPENDENCIES} ${OPTIONAL_DEPENDENCIES} ${TEST_DEPENDENCIES} --name base
       - name: Install pysteps
         run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}        
       - name: Download pysteps data
