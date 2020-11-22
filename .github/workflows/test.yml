@@ -41,6 +41,12 @@ jobs:
           conda install --quiet mamba
           mamba install --quiet ${{env.PACKAGES}} --name base
 
+      - name: debug
+        run: |
+          which conda
+          which python
+          which pytest
+
       - name: Install pysteps for MacOS
         if: matrix.os == 'macos-latest'
         working-directory: ${{github.workspace}}
@@ -64,8 +70,8 @@ jobs:
       - name: Download pysteps data
         env:
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
-        run: |
-          python $GITHUB_WORKSPACE/ci/fetch_pysteps_data.py
+        working-directory: ${{github.workspace}}/ci
+        run: python fetch_pysteps_data.py
 
       - name: Check imports
         working-directory: ${{github.workspace}}/pysteps_data
