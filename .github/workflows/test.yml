@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: $CONDA/bin/conda env update --file environment_dev.yml --name base
       - name: Install pysteps
-        run: pip install ${GITHUB_WORKSPACE}
+        run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}        
       - name: Download pysteps data
         run: |
           export PYSTEPS_DATA_DIR=${GITHUB_WORKSPACE}/pysteps_data
