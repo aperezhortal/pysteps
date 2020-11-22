@@ -20,8 +20,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -31,6 +30,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
+          channel-priority: strict
           activate-environment: test-environment
 
       - name: Install dependencies
@@ -39,7 +39,7 @@ jobs:
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
           conda install --quiet mamba
-          mamba install --quiet ${{env.PACKAGES}} --name base
+          mamba install --quiet ${{env.PACKAGES}}
 
       - name: debug
         run: |
