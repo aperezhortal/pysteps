@@ -31,15 +31,16 @@ jobs:
         run: |
           $CONDA/bin/conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
           $CONDA/bin/conda config --add channels conda-forge
-          $CONDA/bin/conda install  ${{env.PACKAGES}} --name base
+          $CONDA/bin/conda install mamba
+          $CONDA/bin/mamba install ${{env.PACKAGES}} --name base
           $CONDA/bin/conda activate base
       - name: Install pysteps
-        run: pip install ${GITHUB_WORKSPACE}
+        run: $CONDA/bin/pip install ${GITHUB_WORKSPACE}
       - name: Download pysteps data
         run: |
-          python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
+          $CONDA/bin/python ${GITHUB_WORKSPACE}/ci/fetch_pysteps_data.py
           cp ${{env.PYSTEPS_DATA_DIR}}/pystepsrc ~/pystepsrc
       - name: Run tests
-        run: pytest --pyargs pysteps --cov=pysteps -ra;
+        run: $CONDA/bin/pytest --pyargs pysteps --cov=pysteps -ra;
         working-directory: ${{env.HOME}}
 
