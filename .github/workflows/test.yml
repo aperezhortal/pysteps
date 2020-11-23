@@ -2,10 +2,15 @@ name: Test Pysteps installation
 
 env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy
-  OPTIONAL_DEPENDENCIES: pyfftw cartopy h5py PyWavelets dask
+  OPTIONAL_DEPENDENCIES: pyfftw cartopy h5py PyWavelets
   TEST_DEPENDENCIES: pytest pytest-cov codecov
 
-on: [ push ]
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   unit_tests:
@@ -15,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "windows-latest" ]
-        python-version: [ "3.6" ] # ["3.6", "3.7", "3.8", "3.9"]
+        python-version: ["3.9"]
       max-parallel: 5
 
     defaults:
@@ -34,7 +39,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
-          channel-priority: strict
+          channel-priority: flexible
           activate-environment: test-environment
 
       - name: Install dependencies
@@ -57,21 +62,16 @@ jobs:
           brew update
           brew install gcc@9
           gcc-9 --version
-          conda info
-          which python
           pip install .
 
-      - name: Install pygrib
+      - name: Install pygrib (not win)
         if: matrix.os != 'windows-latest'
         run: conda install --quiet pygrib
 
       - name: Install pysteps
         if: matrix.os != 'macos-latest'
         working-directory: ${{github.workspace}}
-        run: |
-          conda info
-          which python
-          pip install .
+        run: pip install .
 
       - name: Download pysteps data
         env:
@@ -82,8 +82,6 @@ jobs:
       - name: Check imports
         working-directory: ${{github.workspace}}/pysteps_data
         run: |
-          conda info
-          which python
           python -c "import pysteps; print(pysteps.__file__)"
           python -c "from pysteps import motion"
           python -c "from pysteps.motion import vet"
@@ -93,12 +91,9 @@ jobs:
         env:
           PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
         run: |
-          conda info
-          which python
           python -c "import pysteps; print(pysteps.__file__)"
           python -c "from pysteps import motion"
           python -c "from pysteps.motion import vet"
           python -c "from pysteps.motion import proesmans"
           pytest --pyargs pysteps --cov=pysteps -ra;
         working-directory: ${{github.workspace}}/pysteps_data
-
