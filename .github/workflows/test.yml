@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ "windows-latest" ]
         python-version: ["3.9"]
-      max-parallel: 5
+      max-parallel: 6
 
     defaults:
       run:
@@ -43,7 +43,9 @@ jobs:
           PACKAGES: ${{env.MINIMAL_DEPENDENCIES}} ${{env.OPTIONAL_DEPENDENCIES}} ${{env.TEST_DEPENDENCIES}}
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
-          conda install --quiet ${{env.PACKAGES}}
+          conda install --quiet mamba
+          mamba install --quiet python=${{ matrix.python-version }} ${{env.PACKAGES}}
+          conda info
 
       - name: Install pysteps for MacOS
         if: matrix.os == 'macos-latest'
