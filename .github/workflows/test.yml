@@ -2,22 +2,26 @@ name: Test Pysteps installation
 
 env:
   MINIMAL_DEPENDENCIES: cython numpy jsmin jsonschema matplotlib netCDF4 opencv pillow pyproj scipy dask
-  OPTIONAL_DEPENDENCIES: pyfftw cartopy h5py PyWavelets
+  OPTIONAL_DEPENDENCIES: dask pyfftw cartopy h5py PyWavelets
   TEST_DEPENDENCIES: pytest pytest-cov codecov
 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   unit_tests:
+    name: Unit Tests (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         os: [ "windows-latest" ]
-        python-version: ["3.8"]
+        python-version: [ "3.6"]
       max-parallel: 6
 
     defaults:
@@ -36,6 +40,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
+          channel-priority: flexible
           activate-environment: test-environment
 
       - name: Install dependencies
@@ -44,7 +49,6 @@ jobs:
           PYSTEPS_DATA_PATH: ${{github.workspace}}/pysteps_data
         run: |
           conda install --quiet ${{env.PACKAGES}}
-          conda info
 
       - name: Install pysteps for MacOS
         if: matrix.os == 'macos-latest'
@@ -84,13 +88,21 @@ jobs:
           python -c "from pysteps.motion import vet"
           python -c "from pysteps.motion import proesmans"
 
-      - name: Run tests
+      - name: Run tests and coverage report
+        working-directory: ${{github.workspace}}/pysteps_data
         env:
           PYSTEPSRC: ${{github.workspace}}/pysteps_data/pystepsrc
-        run: |
-          python -c "import pysteps; print(pysteps.__file__)"
-          python -c "from pysteps import motion"
-          python -c "from pysteps.motion import vet"
-          python -c "from pysteps.motion import proesmans"
-          pytest --pyargs pysteps --cov=pysteps -ra;
+        run: pytest --pyargs pysteps --cov=pysteps --cov-report=xml --cov-report=term -ra
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
         working-directory: ${{github.workspace}}/pysteps_data
+        env:
+          OS: ${{ matrix.os }}
+          PYTHON: ${{ matrix.python-version }}
+        with:
+          file: ${{github.workspace}}/pysteps_data/coverage.xml
+          flags: unit_tests
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
+          verbose: true
